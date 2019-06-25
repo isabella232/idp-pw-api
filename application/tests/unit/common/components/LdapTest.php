@@ -219,6 +219,36 @@ class LdapTest extends TestCase
         $this->assertNotEquals($beforePassword, $afterPassword);
     }
 
+    public function testAccountDisabledUsingBitmask()
+    {
+        $ldap = $this->getClient();
+
+        // OpenLDAP doesn't have 'userAccountControl', so this test uses 'employeenumeber'
+        $ldap->userAccountDisabledAttribute = 'employeenumber';
+        $ldap->userAccountDisabledValue = '2';
+        $ldap->userAccountDisabledBitmask = 2;
+
+        $this->expectException(AccountLockedException::class);
+        $this->expectExceptionCode(1472740480);
+        $pwMeta = $ldap->getMeta('10141');
+
+        $this->assertInstanceOf(UserPasswordMeta::class, $pwMeta);
+    }
+
+    public function testAccountNotDisabledUsingBitmask()
+    {
+        $ldap = $this->getClient();
+
+        // OpenLDAP doesn't have 'userAccountControl', so this test uses 'employeenumeber'
+        $ldap->userAccountDisabledAttribute = 'employeenumber';
+        $ldap->userAccountDisabledValue = '2';
+        $ldap->userAccountDisabledBitmask = 2;
+
+        $pwMeta = $ldap->getMeta('10161');
+
+        $this->assertInstanceOf(UserPasswordMeta::class, $pwMeta);
+    }
+
     /**
      * @return Ldap
      */

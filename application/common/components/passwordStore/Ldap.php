@@ -47,6 +47,13 @@ class Ldap extends Component implements PasswordStoreInterface
     public $userAccountDisabledValue;
 
     /**
+     * This value will be applied to $userAccountDisabledAttribute using
+     * a bitwise AND before being compared to $userAccountDisabledValue.
+     * @var int
+     */
+    public $userAccountDisabledBitmask = 0xFFFFFFFF;
+
+    /**
      * If set, only update password if given attribute is present and value matches
      * @var array attributeName => value
      */
@@ -330,7 +337,13 @@ class Ldap extends Component implements PasswordStoreInterface
             if (is_array($value)) {
                 $value = $value[0];
             }
-            if (strtolower($value) === strtolower($this->userAccountDisabledValue)) {
+            if (is_numeric($this->userAccountDisabledValue)) {
+                $value = (int)$value & $this->userAccountDisabledBitmask;
+
+                if ($value === (int)$this->userAccountDisabledValue) {
+                    throw new AccountLockedException('User account is disabled', 1472740480);
+                }
+            } elseif (strtolower($value) === strtolower($this->userAccountDisabledValue)) {
                 throw new AccountLockedException('User account is disabled', 1472740480);
             }
         }
