@@ -230,7 +230,7 @@ class LdapTest extends TestCase
 
         $this->expectException(AccountLockedException::class);
         $this->expectExceptionCode(1472740480);
-        $pwMeta = $ldap->getMeta('10141');
+        $pwMeta = $ldap->getMeta('10151'); // bit 1 (place value 2) is set
 
         $this->assertInstanceOf(UserPasswordMeta::class, $pwMeta);
     }
@@ -244,7 +244,7 @@ class LdapTest extends TestCase
         $ldap->userAccountDisabledValue = '2';
         $ldap->userAccountDisabledBitmask = 2;
 
-        $pwMeta = $ldap->getMeta('10161');
+        $pwMeta = $ldap->getMeta('10161'); // bit 1 (place value 2) is not set
 
         $this->assertInstanceOf(UserPasswordMeta::class, $pwMeta);
     }
