@@ -190,7 +190,7 @@ class Password extends Model
                 \Yii::warning($log);
                 throw new ConflictHttpException(\Yii::t('app', 'Password.PasswordReuse'), 1469194882);
             } elseif ($e instanceof PasswordStoreException) {
-                \Yii::warning($log);
+                \Yii::error($log);
                 throw new BadRequestHttpException($e->getMessage());
             } else {
                 \Yii::error($log);
